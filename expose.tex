@@ -1,0 +1,64 @@
+\documentclass[pdftex,12pt,a4paper]{article}
+
+\usepackage[pdftex]{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{german}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{lscape}
+\usepackage{cancel}
+\usepackage{verbatim}
+\usepackage{float}
+%\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{document}
+\begin{center}
+\textsc{\Large Exposé zur Bachelorarbeit}\\[0.5 cm]
+\textsc{\Large Arbeitstitel:}\\
+\textsc{\huge Optimistische Replikation in JavaScript  }\\
+\end{center}
+
+\section{Motivation}
+
+Kollaborative Anwendungen wie Google Docs und Office 365 von Microsoft sind für das effiziente Zusammenarbeiten bei Vielen unentbehrlich. Diese Anwendungen erlauben es deren Nutzern an dem gleichen Dokument, oder einem sonstigen Projekt, gleichzeitig, und von völlig verschiedenen Standorten aus zusammenzuarbeiten. Um dies zu ermöglichen, ohne die Arbeit der Einzelnen zu unterbrechen, müssen die Dokumente auf den verschieden Rechnern automatisch synchron gehalten werden.\\
+
+Würde ein klassisches Replikationsverfahren verwendet werden, könnte immer nur ein Nutzer an dem Dokument arbeiten um Konflikte zu vermeiden. Andere Nutzer können während das Dokument von einem der Nutzer bearbeitet wird keine eigenen Änderungen vornehmen. Zusätzlich kommt hinzu dass, die Latenz des Internets die Echtzeitsynchronisation der Ressourcen erschwert.\\
+
+Mithilfe eines optimistischen Replikationsverfahrens können dagegen alle Nutzer gleichzeitig an einer Ressource arbeiten. Die Dokumente werden synchron gehalten, selbst wenn durch die Latenz mehrere Veränderungen gleichzeitig vorgenommen wurden und Konflikte aufgetreten sind. Dies ermöglicht effizientes Arbeiten, selbst bei einer unverlässlichen Verbindung mit dem Internet.\\
+
+\section{Problemaufstellung}
+
+Im Rahmen dieser Bachelorarbeit soll das Verfahren der Operational Transformation verwendet werden, bei dem die Operation die einer der Nutzer ausgeführt hat an die anderen Nutzer geschickt wird und dort vor dem anwenden so verändert wird, dass sie zu dem gleichen Resultat führen, trotz der eigenen Operationen die seitdem vorgenommen wurden. Für den Austausch der Operationen wird eine Client Server Architektur verwendet, so dass die Clients die eignen Operationen an den Server schicken und erhaltene Operationen nach Notwendigkeit anpassen, und der Server den Austausch von Operationen koordiniert. Die Nutzer sollen, wie bei ähnlichen Anwendungen wie Google Docs, im Web-Browser arbeiten, so dass die Einstiegshürde so gering wie möglich ist. Zu diesem Zweck, wird eine Javascript Bibliothek implementiert, die alle nötigen Schnittstellen zu Verfügung stellt um eine solche Client-Anwendung zu entwickeln. Zusätzlich wird eine dazugehörige Server-Anwendung in einem modernen Webframework implementiert.\\
+
+Konkret soll die Bibliothek für die automatische Synchronisation eines JSON-Objektes sorgen. JSON ist ein, in Javascript gängiges, kompaktes Datenformat welches hierarchisch aufgebaut ist. Eine Anwendung die diese Bibliothek benutzt muss nur alle vom Nutzer bearbeitbaren Daten in dem JSON-Objekt speichern, und die Bibliothek sorgte für die automatische Synchronisation und Auflösung von Konflikten. Dazu wird ein bereits bestehender Algorithmus implementiert. Dieser wurde zuerst für Listen entwickelt, auf Baumstrukturen ausgeweitet und dann von Tim Jungnickel und der Fachgruppe Komplexe und Verteilte Systeme an der TU auf JSON Dokumente angewendet. Die fehlende Implementierung und Evaluation soll Ziel dieser Bachelorarbeit sein.\\
+
+%Im Rahmen dieser Bachelorarbeit soll eine prototypische Bibliothek in Javascript implementiert werden die ein solches optimistisches Replikationsverfahren anbietet. Dazu werden die, von den einzelnen Nutzer vorgenommenen Operationen so verändert das bei allen Teilnehmern am Ende die gleichen Projekte vorliegen. Alle Konflikte werden dabei automatisch aufgelöst. Auch eine kleine Server-Applikation die den Austausch von Operationen zwischen allen Teilnehmern bewerkstelligt und eine eigene Version des Projektes Pflegt so dass sich jederzeit neue Nutzer anschließen können, ist notwendig.\\
+
+%Bereits bestehende Algorithmen zur Transformierung der Operationen werden in Javascript implementiert, so dass JSON Dokumente die alle Daten des Projektes enthalten synchron gehalten werden. JSON eignet sich hierbei sehr gut da es eine überschaubare, gut dokumentierte Spezifikation ist. Die Baumstruktur von JSON stellt hierbei die größte Herausforderung da, allerdings ist der Bestehende Algorithmus speziell für Baumstrukturen entworfen worden.\\
+
+Zusätzlich wird eine kleine Beispielanwendung die das gleichzeitige Bearbeiten eines Projektes das eine Baumstruktur benötigt, entwickelt. Diese Anwendung wird genutzt um die Funktionsfähigkeit der Bibliothek zu testen und zu demonstrieren.\\
+
+\section{Zeitplan}
+
+\begin{itemize}
+
+\item (2 Wochen) Einarbeitung in die Materie\\
+\item (4 Wochen) Implementierung der Bibliothek mit Server\\
+\item (1 Woche) Dokumentation der Bibliothek mit Server\\
+\item (3 Wochen) Implementierung der Beispielanwendung\\
+\item (2 Wochen) Finalisierung der Bachelorarbeit\\
+
+\end{itemize}
+
+\section{Mögliche Titel}
+\begin{itemize}
+
+\item Simultane Kollaboration durch optimistische Replikation\\
+\item Optimistische Replikation von hierarchischen in JavaScript \\
+\item Implementierung einer Bibliothek zur Synchronisation von kollaborativen Projekten in Javascript\\
+
+\end{itemize}
+
+
+
+\end{document}
