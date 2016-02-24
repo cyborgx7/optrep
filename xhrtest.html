@@ -1,0 +1,15 @@
+<button onclick="changeLabel()"> Change </button>
+<p id="label">Test</p>
+
+<script>
+var xhr = new XMLHttpRequest();
+function changeLabel() {
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			document.getElementById("label").innerHTML = xhr.responseText;
+		}
+	};
+	xhr.open("POST", "something", true);
+   xhr.send();
+}
+</script>
