@@ -1,15 +1,56 @@
-<button onclick="changeLabel()"> Change </button>
-<p id="label">Test</p>
+<form>
+	<input type="radio" name="op" value="d">Delete<br>
+	<input type="radio" name="op" value="i">Insert<br>
+	<input type="text" id="cont" name="content">
+	<input type="number" name="position" id="pos" min="0" max="100">
+</form>
+<button id="send" onclick="newOp();"> Send </button>
+
+<p id="display"></p>
 
 <script>
-var xhr = new XMLHttpRequest();
-function changeLabel() {
+var arr = ["test"] 
+function newOp() {
+	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			document.getElementById("label").innerHTML = xhr.responseText;
 		}
 	};
-	xhr.open("POST", "something", true);
-   xhr.send();
+	xhr.open("POST", "newOp", true);
+
+	var radios = document.getElementsByName("op");
+	var operation;
+	for (var i = 0; i < radios.length; i++) {       
+		if (radios[i].checked) {
+			operation = radios[i].value;
+			break;
+		}
+	}
+	
+	xhr.send(JSON.stringify({
+		"o":operation,
+		"p":document.getElementById("pos").value,
+		"c":document.getElementById("cont").value
+	}));
 }
+
+
+function wait() {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			executeOp(JSON.parse(xhr.responseText));
+		}
+	}
+}
+
+function executeOp(op) {
+	if (op.o == "i") {arr.splice(op["p"], 0, op["c"]);}
+	if (op.o == "d") {arr.splice(op["p"], 1);}
+	document.getElementById("display").innerHTML = arr.toString();
+	wait();
+}
+
+document.getElementById("display").innerHTML = arr.toString();
+wait();
 </script>

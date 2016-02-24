@@ -8,7 +8,7 @@ server = http.createServer( function (request, response) {
 		response.writeHead(200, {"Content-Type": "text/html"});
 		response.end(index);
 	} else if (request.method == "POST") {
-		response.writeHead(200, {"Content-Type": "text/plain"});
+		console.log(request.body);
 		response.end("success");
 	}
 });
