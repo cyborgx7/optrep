@@ -1,3 +1,5 @@
+<html>
+<body>
 <form>
 	<input type="radio" name="op" value="d">Delete<br>
 	<input type="radio" name="op" value="i">Insert<br>
@@ -14,9 +16,12 @@ function newOp() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
+			executeOp(JSON.parse(xhr.response));
 		}
 	};
+
 	xhr.open("POST", "newOp", true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");	
 
 	var radios = document.getElementsByName("op");
 	var operation;
@@ -27,11 +32,13 @@ function newOp() {
 		}
 	}
 	
-	xhr.send(JSON.stringify({
-		"o":operation,
-		"p":document.getElementById("pos").value,
-		"c":document.getElementById("cont").value
-	}));
+	var opToSend = JSON.stringify({
+		o:operation,
+		p:document.getElementById("pos").value,
+		c:document.getElementById("cont").value
+	});
+	console.log(opToSend);
+	xhr.send(opToSend);
 }
 
 
@@ -54,3 +61,5 @@ function executeOp(op) {
 document.getElementById("display").innerHTML = arr.toString();
 wait();
 </script>
+</body>
+</html>

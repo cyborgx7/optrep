@@ -8,8 +8,16 @@ server = http.createServer( function (request, response) {
 		response.writeHead(200, {"Content-Type": "text/html"});
 		response.end(index);
 	} else if (request.method == "POST") {
-		console.log(request.body);
-		response.end("success");
+		var body = "";
+		console.log(request);
+		request.on("data", function (chunk) {
+			body += chunk;
+		});
+		request.on("end", function () {
+		console.log(body);
+		response.writeHead(200, {"Content-Type": "text/html"});
+		response.end(body);
+		});
 	}
 });
 
