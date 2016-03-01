@@ -16,7 +16,7 @@ function newOp() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			executeOp(JSON.parse(xhr.response));
+			console.log(xhr.response);
 		}
 	};
 
@@ -49,6 +49,11 @@ function wait() {
 			executeOp(JSON.parse(xhr.responseText));
 		}
 	}
+	xhr.open("POST", "wait", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.send("waiting");
+
+	
 }
 
 function executeOp(op) {
