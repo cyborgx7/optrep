@@ -27,7 +27,7 @@ server = http.createServer( function (request, response) {
 			response.end("success");
 			});
 		} else if (request.url == "/wait") { //handle waiting for events
-			opHandler.on("newOp", function (op) {
+			opHandler.once("newOp", function (op) {
 				response.writeHead(200, {"Content-Type": "text/html"});
 				response.end(op);
 			});
