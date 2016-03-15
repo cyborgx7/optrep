@@ -32,13 +32,14 @@ function newOp() {
 		}
 	}
 	
-	var opToSend = JSON.stringify({
+	var opToSend = {
 		o:operation,
 		p:document.getElementById("pos").value,
 		c:document.getElementById("cont").value
-	});
+	};
+	executeOp(opToSend); //execute operation locally
 	console.log(opToSend);
-	xhr.send(opToSend);
+	xhr.send(JSON.stringify(opToSend)); //send operation to server
 }
 
 
@@ -47,7 +48,11 @@ function wait() {
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			executeOp(JSON.parse(xhr.responseText));
+			wait();
 		}
+	}
+	xhr.ontimeout = function () {
+		wait();
 	}
 	xhr.open("POST", "wait", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -57,10 +62,10 @@ function wait() {
 }
 
 function executeOp(op) {
+	console.log(op)
 	if (op.o == "i") {arr.splice(op["p"], 0, op["c"]);}
 	if (op.o == "d") {arr.splice(op["p"], 1);}
 	document.getElementById("display").innerHTML = arr.toString();
-	wait();
 }
 
 document.getElementById("display").innerHTML = arr.toString();
