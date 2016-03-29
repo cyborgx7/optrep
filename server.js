@@ -3,6 +3,7 @@ fs     = require("fs");
 eventEmitter = require("events").EventEmitter;
 
 index = fs.readFileSync("xhrtest.html");
+xforml = fs.readFileSync("xforml.js");
 
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
@@ -31,6 +32,10 @@ server = http.createServer( function (request, response) {
 			nextUuid++;
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end(index);
+		} if (request.url == "/xforml.js") {
+			console.log("xforml");
+			response.writeHead(200, {"Content-Type": "text/JavaScript"});
+			response.end(xforml);
 		} else { console.log(request.url);};
 	} else if (request.method == "POST") {
 		console.log("post");
