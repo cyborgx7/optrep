@@ -5,6 +5,9 @@ eventEmitter = require("events").EventEmitter;
 index = fs.readFileSync("xhrtest.html");
 xforml = fs.readFileSync("xforml.js");
 
+vm = require("vm");
+vm.runInThisContext(xforml);
+
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
 //Initialize UUID
@@ -19,6 +22,9 @@ function parseCookies (cookies) {
 	});
 	return parsed;
 }
+
+
+console.log(xforml({o:"i",k:"1",c:"something"}, {o:"i",k:"0",c:"somethingelse"}));
 
 
 //request handler
