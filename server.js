@@ -3,10 +3,10 @@ fs     = require("fs");
 eventEmitter = require("events").EventEmitter;
 
 index = fs.readFileSync("xhrtest.html");
-xforml = fs.readFileSync("xforml.js");
+filexforml = fs.readFileSync("xforml.js");
 
 vm = require("vm");
-vm.runInThisContext(xforml);
+vm.runInThisContext(filexforml);
 
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
@@ -41,7 +41,7 @@ server = http.createServer( function (request, response) {
 		} if (request.url == "/xforml.js") {
 			console.log("xforml");
 			response.writeHead(200, {"Content-Type": "text/JavaScript"});
-			response.end(xforml);
+			response.end(filexforml);
 		} else { console.log(request.url);};
 	} else if (request.method == "POST") {
 		console.log("post");
