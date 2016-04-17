@@ -6,8 +6,8 @@
 	<input type="text" id="cont" name="content">
 	<input type="number" name="position" id="pos" min="0" max="100">
 </form>
-<button id="apply" onclick="apply();"> Apply </button>
 <button id="send" onclick="newOp();"> Send </button>
+<button id="reach" onclick="reach();"> Reach </button>
 
 <p id="display"></p>
 
@@ -15,6 +15,12 @@
 <script>
 var buffer = [];
 var revisionNr = 0;
+var inFlight = false;
+var inFlightOp;
+var sendOp;
+
+
+
 var arr = ["test"];
 function buildOp() {
 	var radios = document.getElementsByName("op");
@@ -35,26 +41,38 @@ function buildOp() {
 	return opToSend;
 }
 
-function apply() {
+function newOp() {
 	var opToSend = buildOp();
-	buffer.push(opToSend);
+	if (inFlight) {
+		buffer.push(opToSend);
+	} else { 
+		send(opToSend);
+	}
 	executeOp(opToSend); //execute operation locally
+}
+
+function send(op) {
+		inFlight = true;
+		inFlightOp = op;
+		op["rn"] = revisionNr;
+		sendOp = JSON.parse(JSON.stringify(op));
 }
 
 function transform(op) {
 	for (var i = 0; i < buffer.length; i++){
-		xformed = xforml(op, buffer[i]);
-		op = xformed [0];
+		var xformed = xforml(op, buffer[i]);
+		var op = xformed [0];
 		buffer[i] = xformed[1];
 	}
-	
+	if (inFlight) {
+		var xformed = xforml(op,inFlightOp);
+		op = xformed[0];
+		inFlightOp = xformed[1];
+	}
 	return op
 }
 
-
-function newOp() {
-	var opToSend = buffer.shift();
-	opToSend["rn"] = revisionNr;
+function reach() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
@@ -63,7 +81,7 @@ function newOp() {
 	};
 	xhr.open("POST", "newOp", true);
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhr.send(JSON.stringify(opToSend)); //send operation to server
+	xhr.send(JSON.stringify(sendOp)); //send operation to server
 }
 
 function wait() {
@@ -72,7 +90,13 @@ function wait() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			recieved = JSON.parse(xhr.response);
 			revisionNr++;
-			if (recieved["o"] != "a"){
+			if (recieved["o"] == "a"){
+				if (buffer.length > 0) {
+					send(buffer.shift());
+				} else {
+					inFlight = false;
+				}
+			} else {
 				recieved = transform(recieved);
 				executeOp(recieved);
 			}

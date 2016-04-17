@@ -15,6 +15,7 @@ var nextUuid = 0;
 
 //cookie parser
 function parseCookies (cookies) {
+	if (!cookies) { return {} }
 	var parsed = {};
 	cookies.split(";").forEach(function(cookie) {
 		var elems = cookies.split("=");
