@@ -61,7 +61,7 @@ function send(op) {
 function transform(op) {
 	for (var i = 0; i < buffer.length; i++){
 		var xformed = xforml(op, buffer[i]);
-		var op = xformed [0];
+		var op = xformed[0];
 		buffer[i] = xformed[1];
 	}
 	if (inFlight) {

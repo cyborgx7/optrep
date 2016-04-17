@@ -12,6 +12,8 @@ vm.runInThisContext(filexforml);
 var opHandler = new eventEmitter();
 //Initialize UUID
 var nextUuid = 0;
+//Initialize operation history
+var hist = [];
 
 //cookie parser
 function parseCookies (cookies) {
@@ -22,6 +24,19 @@ function parseCookies (cookies) {
 		parsed[elems[0]] = elems[1];
 	});
 	return parsed;
+}
+
+function transform(op) {
+	console.log("transform");
+	for (var i = op["rn"]; i < hist.length; i++){
+		console.log("cycle");
+		console.log(op)
+		console.log(hist[i]);
+		var xformed = xforml(op, hist[i]);
+		var op = xformed[0];
+		hist[i] = xformed[1];
+	}
+	return op
 }
 
 //request handler
@@ -51,9 +66,12 @@ server = http.createServer( function (request, response) {
 			});
 			request.on("end", function () {
 			console.log(body);
+			var op = JSON.parse(body);
+			op = transform(op);
+			hist.push(op);
 			//get uid
 			var opUid = parseCookies(request.headers.cookie)["uid"];
-			opHandler.emit("newOp", body, opUid);
+			opHandler.emit("newOp", JSON.stringify(op), opUid);
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end("success");
 			});
