@@ -28,7 +28,7 @@ function buildOp() {
 	
 	var opToSend = {
 		o:operation,
-		p:document.getElementById("pos").value,
+		k:document.getElementById("pos").value,
 		c:document.getElementById("cont").value
 	};
 	console.log(opToSend);
@@ -40,6 +40,17 @@ function apply() {
 	buffer.push(opToSend);
 	executeOp(opToSend); //execute operation locally
 }
+
+function transform(op) {
+	for (var i = 0; i < buffer.length; i++){
+		xformed = xforml(op, buffer[i]);
+		op = xformed [0];
+		buffer[i] = xformed[1];
+	}
+	
+	return op
+}
+
 
 function newOp() {
 	var opToSend = buffer.shift();
@@ -59,7 +70,12 @@ function wait() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			executeOp(JSON.parse(xhr.responseText));
+			recieved = JSON.parse(xhr.response);
+			revisionNr++;
+			if (recieved["o"] != "a"){
+				recieved = transform(recieved);
+				executeOp(recieved);
+			}
 			wait();
 		}
 	}
@@ -75,8 +91,8 @@ function wait() {
 
 function executeOp(op) {
 	console.log(op)
-	if (op.o == "i") {arr.splice(op["p"], 0, op["c"]);}
-	if (op.o == "d") {arr.splice(op["p"], 1);}
+	if (op.o == "i") {arr.splice(op["k"], 0, op["c"]);}
+	if (op.o == "d") {arr.splice(op["k"], 1);}
 	document.getElementById("display").innerHTML = arr.toString();
 }
 
