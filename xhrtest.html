@@ -6,6 +6,7 @@
 	<input type="text" id="cont" name="content">
 	<input type="number" name="position" id="pos" min="0" max="100">
 </form>
+<button id="apply" onclick="apply();"> Apply </button>
 <button id="send" onclick="newOp();"> Send </button>
 
 <p id="display"></p>
@@ -13,17 +14,7 @@
 <script src="xforml.js"></script>
 <script>
 var arr = ["test"] 
-function newOp() {
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function () {
-		if (xhr.readyState == 4 && xhr.status == 200) {
-			console.log(xhr.response);
-		}
-	};
-
-	xhr.open("POST", "newOp", true);
-	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");	
-
+function buildOp() {
 	var radios = document.getElementsByName("op");
 	var operation;
 	for (var i = 0; i < radios.length; i++) {       
@@ -38,10 +29,31 @@ function newOp() {
 		p:document.getElementById("pos").value,
 		c:document.getElementById("cont").value
 	};
-	executeOp(opToSend); //execute operation locally
 	console.log(opToSend);
+	return opToSend;
+}
+
+function apply() {
+	var opToSend = buildOp();
+	executeOp(opToSend); //execute operation locally
+}
+
+function newOp() {
+	var opToSend = buildOp();
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			console.log(xhr.response);
+		}
+	};
+	xhr.open("POST", "newOp", true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhr.send(JSON.stringify(opToSend)); //send operation to server
 }
+
+
+
+
 
 
 function wait() {

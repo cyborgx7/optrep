@@ -23,10 +23,6 @@ function parseCookies (cookies) {
 	return parsed;
 }
 
-
-console.log(xforml({o:"i",k:"1",c:"something"}, {o:"i",k:"0",c:"somethingelse"}));
-
-
 //request handler
 server = http.createServer( function (request, response) {
 	console.log("recieve");
