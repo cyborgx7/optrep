@@ -13,7 +13,8 @@
 
 <script src="xforml.js"></script>
 <script>
-var arr = ["test"] 
+var buffer = [];
+var arr = ["test"];
 function buildOp() {
 	var radios = document.getElementsByName("op");
 	var operation;
@@ -35,11 +36,11 @@ function buildOp() {
 
 function apply() {
 	var opToSend = buildOp();
+	buffer.push(opToSend);
 	executeOp(opToSend); //execute operation locally
 }
 
 function newOp() {
-	var opToSend = buildOp();
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
@@ -48,7 +49,7 @@ function newOp() {
 	};
 	xhr.open("POST", "newOp", true);
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhr.send(JSON.stringify(opToSend)); //send operation to server
+	xhr.send(JSON.stringify(buffer.shift())); //send operation to server
 }
 
 
