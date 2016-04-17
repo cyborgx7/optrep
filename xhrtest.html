@@ -14,6 +14,7 @@
 <script src="xforml.js"></script>
 <script>
 var buffer = [];
+var revisionNr = 0;
 var arr = ["test"];
 function buildOp() {
 	var radios = document.getElementsByName("op");
@@ -41,6 +42,8 @@ function apply() {
 }
 
 function newOp() {
+	var opToSend = buffer.shift();
+	opToSend["rn"] = revisionNr;
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
@@ -49,13 +52,8 @@ function newOp() {
 	};
 	xhr.open("POST", "newOp", true);
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhr.send(JSON.stringify(buffer.shift())); //send operation to server
+	xhr.send(JSON.stringify(opToSend)); //send operation to server
 }
-
-
-
-
-
 
 function wait() {
 	var xhr = new XMLHttpRequest();
