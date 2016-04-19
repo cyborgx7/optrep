@@ -67,7 +67,7 @@ server = http.createServer( function (request, response) {
 			request.on("end", function () {
 			console.log(body);
 			var op = JSON.parse(body);
-			op = transform(op);
+			//op = transform(op);
 			hist.push(op);
 			//get uid
 			var opUid = parseCookies(request.headers.cookie)["uid"];

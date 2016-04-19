@@ -3,8 +3,8 @@
 <form>
 	<input type="radio" name="op" value="d">Delete<br>
 	<input type="radio" name="op" value="i">Insert<br>
-	<input type="text" id="cont" name="content">
-	<input type="number" name="position" id="pos" min="0" max="100">
+	<input type="text" id="cont" name="content"><br>
+	<textarea name="position" id="pos"></textarea>
 </form>
 <button id="send" onclick="newOp();"> Send </button>
 <button id="reach" onclick="reach();"> Reach </button>
@@ -30,10 +30,10 @@ function buildOp() {
 			break;
 		}
 	}
-	
+	console.log(document.getElementById("pos").value);
 	var opToSend = {
 		o:operation,
-		k:document.getElementById("pos").value,
+		k:document.getElementById("pos").value.split("\n"),
 		c:document.getElementById("cont").value
 	};
 	console.log(opToSend);
@@ -96,7 +96,7 @@ function wait() {
 					inFlight = false;
 				}
 			} else {
-				recieved = transform(recieved);
+				//recieved = transform(recieved);
 				executeOp(recieved);
 			}
 			wait();
@@ -129,7 +129,7 @@ function remove(k) {
 		key = k[i];
 		curr = curr[key];
 	}
-	delete curr[k[k.length]];	
+	delete curr[k[k.length-1]];
 	return;
 }
 
