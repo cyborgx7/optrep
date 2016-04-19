@@ -1,0 +1,147 @@
+<html>
+<body>
+<form>
+	<input type="radio" name="op" value="d">Delete<br>
+	<input type="radio" name="op" value="i">Insert<br>
+	<input type="text" id="cont" name="content">
+	<input type="number" name="position" id="pos" min="0" max="100">
+</form>
+<button id="send" onclick="newOp();"> Send </button>
+<button id="reach" onclick="reach();"> Reach </button>
+
+<p id="display"></p>
+
+<script src="xforml.js"></script>
+<script>
+var buffer = [];
+var revisionNr = 0;
+var inFlight = false;
+var inFlightOp;
+var sendOp;
+
+var graph = {test:"tesing", something:{one:1, two:2}};
+
+function buildOp() {
+	var radios = document.getElementsByName("op");
+	var operation;
+	for (var i = 0; i < radios.length; i++) {       
+		if (radios[i].checked) {
+			operation = radios[i].value;
+			break;
+		}
+	}
+	
+	var opToSend = {
+		o:operation,
+		k:document.getElementById("pos").value,
+		c:document.getElementById("cont").value
+	};
+	console.log(opToSend);
+	return opToSend;
+}
+
+function newOp() {
+	var opToSend = buildOp();
+	if (inFlight) {
+		buffer.push(opToSend);
+	} else { 
+		send(opToSend);
+	}
+	executeOp(opToSend); //execute operation locally
+}
+
+function send(op) {
+		inFlight = true;
+		inFlightOp = op;
+		op["rn"] = revisionNr;
+		sendOp = JSON.parse(JSON.stringify(op));
+}
+
+function transform(op) {
+	for (var i = 0; i < buffer.length; i++){
+		var xformed = xforml(op, buffer[i]);
+		var op = xformed[0];
+		buffer[i] = xformed[1];
+	}
+	if (inFlight) {
+		var xformed = xforml(op,inFlightOp);
+		op = xformed[0];
+		inFlightOp = xformed[1];
+	}
+	return op
+}
+
+function reach() {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			console.log(xhr.response);
+		}
+	};
+	xhr.open("POST", "newOp", true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.send(JSON.stringify(sendOp)); //send operation to server
+}
+
+function wait() {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			recieved = JSON.parse(xhr.response);
+			revisionNr++;
+			if (recieved["o"] == "a"){
+				if (buffer.length > 0) {
+					send(buffer.shift());
+				} else {
+					inFlight = false;
+				}
+			} else {
+				recieved = transform(recieved);
+				executeOp(recieved);
+			}
+			wait();
+		}
+	}
+	xhr.ontimeout = function () {
+		wait();
+	}
+	xhr.open("POST", "wait", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.send("waiting");
+}
+
+function insert(c, k) {
+	var curr = graph;
+	for (var i = 0; i < k.length-1; i++) {
+		key = k[i];
+		if (!curr[key]) {
+			curr[key] = {};
+		}
+		curr = curr[key];
+	}
+	curr[k[k.length-1]] = c;
+	return;
+}
+
+function remove(k) {
+	var curr = graph;
+	for (var i = 0; i < k.length-1; i++) {
+		key = k[i];
+		curr = curr[key];
+	}
+	delete curr[k[k.length]];	
+	return;
+}
+
+function executeOp(op) {
+	console.log(op)
+	if (op.o == "i") {insert(op.c,op.k);}
+	if (op.o == "d") {remove(op.k);}
+	document.getElementById("display").innerHTML = JSON.stringify(graph);
+}
+
+document.getElementById("display").innerHTML = JSON.stringify(graph);
+wait();
+</script>
+</body>
+</html>

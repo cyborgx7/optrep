@@ -2,7 +2,7 @@ http   = require("http");
 fs     = require("fs");
 eventEmitter = require("events").EventEmitter;
 
-index = fs.readFileSync("xhrtest.html");
+index = fs.readFileSync("graphtest.html");
 filexforml = fs.readFileSync("xforml.js");
 
 vm = require("vm");
