@@ -4,7 +4,8 @@
 	<input type="radio" name="op" value="d">Delete<br>
 	<input type="radio" name="op" value="i">Insert<br>
 	<input type="text" id="cont" name="content"><br>
-	<textarea name="position" id="pos"></textarea>
+	<textarea name="vector" id="vec"></textarea><br>
+	<input type="number" name="position" id="pos" min="0" max="100">
 </form>
 <button id="send" onclick="newOp();"> Send </button>
 <button id="reach" onclick="reach();"> Reach </button>
@@ -19,7 +20,7 @@ var inFlight = false;
 var inFlightOp;
 var sendOp;
 
-var graph = {test:"tesing", something:{one:1, two:2}};
+var graph = ["{}",[]];
 
 function buildOp() {
 	var radios = document.getElementsByName("op");
@@ -33,9 +34,11 @@ function buildOp() {
 	console.log(document.getElementById("pos").value);
 	var opToSend = {
 		o:operation,
-		k:document.getElementById("pos").value.split("\n"),
-		c:document.getElementById("cont").value
+		k:document.getElementById("vec").value.split("\n"),
+		c:JSON.parse(document.getElementById("cont").value),
+		i:document.getElementById("pos").value
 	};
+	if (opToSend.k[0] == ""){opToSend.k=[];}
 	console.log(opToSend);
 	return opToSend;
 }
@@ -110,33 +113,61 @@ function wait() {
 	xhr.send("waiting");
 }
 
-function insert(c, k) {
-	var curr = graph;
-	for (var i = 0; i < k.length-1; i++) {
-		key = k[i];
-		if (!curr[key]) {
-			curr[key] = {};
-		}
-		curr = curr[key];
+function travObj(i, k, node) {
+	i++;
+	if (i == k.length) {
+		return node;
 	}
-	curr[k[k.length-1]] = c;
+	return travKey(i, k, node[1][k[i]]);
+}
+
+function travKey(i, k, node) {
+	var val = node[1][0];
+	return travValue(i, k, node, val);
+}
+
+function travArray(i, k, node) {
+	i++;
+	if (i == k.length) {
+		return node;
+	}
+	var val = node[1][k[i]][0];
+	return travValue(i, k, node, val);
+}
+
+function travValue(i, k, node, val) {
+	if (val == "{}") {
+		return travObj(i, k, node[1]);
+	} else if (val == "[]") {
+		return travArray(i, k, node[1]);
+	} else {
+		throw "incorrect path";
+	}
+
+}
+
+function insert(c, k, i) {
+	var node = graph;
+	if (k.length > 0) {
+		node = travKey(0, k, node[1][k[0]]);
+	}
+	node[1].splice(i,0,c);
 	return;
 }
 
-function remove(k) {
-	var curr = graph;
-	for (var i = 0; i < k.length-1; i++) {
-		key = k[i];
-		curr = curr[key];
+function remove(k, i) {
+	var node = graph;
+	if (k.length > 0) {
+		node = travKey(0, k, node[1][k[0]]);
 	}
-	delete curr[k[k.length-1]];
+	node[1].splice(i,1);
 	return;
 }
 
 function executeOp(op) {
 	console.log(op)
-	if (op.o == "i") {insert(op.c,op.k);}
-	if (op.o == "d") {remove(op.k);}
+	if (op.o == "i") {insert(op.c, op.k, op.i);}
+	if (op.o == "d") {remove(op.k, op.i);}
 	document.getElementById("display").innerHTML = JSON.stringify(graph);
 }
 
