@@ -74,7 +74,57 @@ function xformgii(op1, op2) {
 function xformgid(op1, op2) {
 	if (op1.k.length > op2.k.length) {
 		if (op2.k.isSublistOf(op1.k)) {
-				if (op1.k[op2.k.length] > op2.i)
+			if (op1.k[op2.k.length] > op2.i) {
+				op1.k[op2.k.length]--;
+				return [op1,op2];
+			} else if (op1.k[op2.k.length] == op2.i) {
+				return CONFLICT_HANDLER(op1,op2);
+			} else {
+				return [op1,op2];
+			}
+		}
+	} else if (op1.k.length < op2.k.length) {
+		if (op1.k.isSublistOf(op2.k)) {
+			if (op2.k[op1.k.length] >= op1.i) {
+				op2.k[op1.k.length]++;
+				return [op1,op2];
+			} else if (op2.k[op1.k.length] < op1.i) {
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	} else if (op1.k.length == op2.k.length) {
+		if (op1.k.isSublistOf(op2.k)) {
+			if (op1.i < op2.i) {
+				op2.i++;
+				return [op1,op2];
+			}
+			if (op1.i > op2.i) {
+				op1.i--;
+				return [op1,op2];
+			}
+			if (op1.i == op2.i) {
+				op2.i++;
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	}
+}
+
+function xformgdd(op1,op2) {
+	if (op1.k.length > op2.k.length) {
+		if (op2.k.isSublistOf(op1.k)) {
+			if (op1.k.length > op1.i) {
+				op1.k[op2.k.length]--;
+				return [op1,op2];
+			}
+			if (op1.k[op2.k.length] == op2.i) {
+				op1.o = 'n';
+				return [op1,op2];
+					  }
 
 function isSublistOf(k) {
 	for (var i = 0; i < this.length; i++) {
