@@ -1,114 +1,115 @@
-function xformg(o1, o2, isServer) {
-	console.log(o1.o);
-	console.log(o2.o);
-	if (o1.o == "i") {
+function xformg(op1, op2) {
+	console.log(op1.o);
+	console.log(op2.o);
+	if (op1.o == "i") {
 		console.log("i");
-		if (o2["o"] == "i") {
-			return xformgii(o1,o2,isServer);
+		if (op2["o"] == "i") {
+			return xformgii(op1,op2);
 		}
-		if (o2["o"] = "d") {
-			return xformgid(o1,o2);
+		if (op2["o"] = "d") {
+			return xformgid(op1,op2);
 		}
 	}
-	if (o1.o == "d") {
+	if (op1.o == "d") {
 		console.log('d');
-		if (o2["o"] == "i") {
-			return xformgid(o2,o1);
+		if (op2["o"] == "i") {
+			var xformed = xformgid(op2,op1);
+			return [xformed[1],xformed[0]];
 		}
-		if (o2["o"] = "d") {
-			return xformgdd(o1,o2);
+		if (op2["o"] = "d") {
+			return xformgdd(op1,op2);
 		}
 	}
 }
 
 function xformgii(op1, op2) {
-	var tpt = transformationPoint(o1.k,o2.k);
+	var tpt = transformationPoint(op1.k,op2.k);
 
-	if (effectIndependant(o1.k,o2.k)) {return [o1,o2];}
+	if (effectIndependent(op1.k,op2.k)) {return [op1,op2];}
 
-	if (o1.k[tpt] > o2.k[tpt] {
-		o1.k[tpt]++;
-		return [o1,o2];	
+	if (op1.k[tpt] > op2.k[tpt]) {
+		op1.k[tpt]++;
+		return [op1,op2];	
 	}
 
-	if (o1.k[tpt] < o2.k[tpt] {
-		o2.k[tpt]++;
-		return [o1,o2];
+	if (op1.k[tpt] < op2.k[tpt]) {
+		op2.k[tpt]++;
+		return [op1,op2];
 	}
 
-	if (o1.k[tpt] == o2.k[tpt]){
-		if (o1.k.length > o2.k.length) {
-			o1.k[tpt]++;
-			return [o1,o2];
+	if (op1.k[tpt] == op2.k[tpt]) {
+		if (op1.k.length > op2.k.length) {
+			op1.k[tpt]++;
+			return [op1,op2];
 		}
 
-		if (o1.k.length < o2.k.length) {
-			o2.k[tpt]++;
-			return [o1,o2];
+		if (op1.k.length < op2.k.length) {
+			op2.k[tpt]++;
+			return [op1,op2];
 		}
 
-		if (o1.k.length == o2.k.length) {
+		if (op1.k.length == op2.k.length) {
 			//application depndent priorities
 		}
 	}
 }
 
 function xformgid(op1, op2) {
-	var tpt = transformationPoint(o1.k,o2.k);
+	var tpt = transformationPoint(op1.k,op2.k);
 
-	if (effectIndependant(o1.k,o2.k)) {return [o1,o2];}
+	if (effectIndependent(op1.k,op2.k)) {return [op1,op2];}
 
-	if (o1.k[tpt] > o2.k[tpt] {
-		o1.k[tpt]--;
-		return [o1,o2];	
+	if (op1.k[tpt] > op2.k[tpt]) {
+		op1.k[tpt]--;
+		return [op1,op2];	
 	}
 
-	if (o1.k[tpt] < o2.k[tpt] {
-		o2.k[tpt]++;
-		return [o1,o2];
+	if (op1.k[tpt] < op2.k[tpt]) {
+		op2.k[tpt]++;
+		return [op1,op2];
 	}
 
-	if (o1.k[tpt] == o2.k[tpt]){
-		if (o1.k.length > o2.k.length) {
-			o1.o = "n";
-			return [o1,o2];
+	if (op1.k[tpt] == op2.k[tpt]) {
+		if (op1.k.length > op2.k.length) {
+			op1.o = "n";
+			return [op1,op2];
 		}
 
-		o2.k[tpt]++;
+		op2.k[tpt]++;
 	}
 
 }
 
 function xformgdd(op1,op2) {
-	var tpt = transformationPoint(o1.k,o2.k);
+	var tpt = transformationPoint(op1.k,op2.k);
 
-	if (effectIndependant(o1.k,o2.k)) {return [o1,o2];}
+	if (effectIndependent(op1.k,op2.k)) {return [op1,op2];}
 
-	if (o1.k[tpt] > o2.k[tpt] {
-		o1.k[tpt]--;
-		return [o1,o2];	
+	if (op1.k[tpt] > op2.k[tpt]) {
+		op1.k[tpt]--;
+		return [op1,op2];	
 	}
 
-	if (o1.k[tpt] < o2.k[tpt] {
-		o2.k[tpt]--;
-		return [o1,o2];
+	if (op1.k[tpt] < op2.k[tpt]) {
+		op2.k[tpt]--;
+		return [op1,op2];
 	}
 
-	if (o1.k[tpt] == o2.k[tpt]){
-		if (o1.k.length > o2.k.length) {
-			o1.o = "n";
-			return [o1,o2];
+	if (op1.k[tpt] == op2.k[tpt]) {
+		if (op1.k.length > op2.k.length) {
+			op1.o = "n";
+			return [op1,op2];
 		}
 
-		if (o1.k.length < o2.k.length) {
-			o2.o = "n";
-			return [o1,o2];
+		if (op1.k.length < op2.k.length) {
+			op2.o = "n";
+			return [op1,op2];
 		}
 
-		if (o1.k.length == o2.k.length) {
-			o1.o = "n";
-			o2.o = "n";
-			return [o1,o2];
+		if (op1.k.length == op2.k.length) {
+			op1.o = "n";
+			op2.o = "n";
+			return [op1,op2];
 		}
 	}
 
@@ -136,10 +137,10 @@ function transformationPoint(k1,k2) {
 	}
 }
 
-function effectIndipendent(k1,k2) {
+function effectIndependent(k1,k2) {
 	var tpt = transformationPoint(k1,k2);
-	if ((k1.length > tpt+1) and (k2.length > tpt+1)) {return true;}
-	if ((k1[tpt] > k2[tpt]) and (k1.length < k2.length)) {return true;}
-	if ((k1[tpt] < k2[tpt]) and (k1.length > k2.length)) {return true;}
+	if ((k1.length > tpt+1) && (k2.length > tpt+1)) {return true;}
+	if ((k1[tpt] > k2[tpt]) && (k1.length < k2.length)) {return true;}
+	if ((k1[tpt] < k2[tpt]) && (k1.length > k2.length)) {return true;}
 	return false;
 }

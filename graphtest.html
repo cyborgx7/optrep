@@ -5,7 +5,6 @@
 	<input type="radio" name="op" value="i">Insert<br>
 	<input type="text" id="cont" name="content"><br>
 	<textarea name="vector" id="vec"></textarea><br>
-	<input type="number" name="position" id="pos" min="0" max="100">
 </form>
 <button id="send" onclick="newOp();"> Send </button>
 <button id="reach" onclick="reach();"> Reach </button>
@@ -31,12 +30,10 @@ function buildOp() {
 			break;
 		}
 	}
-	console.log(document.getElementById("pos").value);
 	var opToSend = {
 		o:operation,
 		k:document.getElementById("vec").value.split("\n"),
 		c:JSON.parse(document.getElementById("cont").value),
-		i:document.getElementById("pos").value
 	};
 	if (opToSend.k[0] == ""){opToSend.k=[];}
 	console.log(opToSend);
@@ -115,7 +112,7 @@ function wait() {
 
 function travObj(i, k, node) {
 	i++;
-	if (i == k.length) {
+	if (i == k.length-1) {
 		return node;
 	}
 	return travKey(i, k, node[1][k[i]]);
@@ -128,7 +125,7 @@ function travKey(i, k, node) {
 
 function travArray(i, k, node) {
 	i++;
-	if (i == k.length) {
+	if (i == k.length-1) {
 		return node;
 	}
 	var val = node[1][k[i]][0];
@@ -146,28 +143,28 @@ function travValue(i, k, node, val) {
 
 }
 
-function insert(c, k, i) {
+function insert(c, k) {
 	var node = graph;
-	if (k.length > 0) {
+	if (k.length > 1) {
 		node = travKey(0, k, node[1][k[0]]);
 	}
-	node[1].splice(i,0,c);
+	node[1].splice(k[k.length-1],0,c);
 	return;
 }
 
-function remove(k, i) {
+function remove(k) {
 	var node = graph;
-	if (k.length > 0) {
+	if (k.length > 1) {
 		node = travKey(0, k, node[1][k[0]]);
 	}
-	node[1].splice(i,1);
+	node[1].splice(k[k.length-1],1);
 	return;
 }
 
 function executeOp(op) {
 	console.log(op)
-	if (op.o == "i") {insert(op.c, op.k, op.i);}
-	if (op.o == "d") {remove(op.k, op.i);}
+	if (op.o == "i") {insert(op.c, op.k);}
+	if (op.o == "d") {remove(op.k);}
 	document.getElementById("display").innerHTML = JSON.stringify(graph);
 }
 
