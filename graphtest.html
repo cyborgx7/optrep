@@ -12,7 +12,7 @@
 
 <p id="display"></p>
 
-<script src="xforml.js"></script>
+<script src="xformg.js"></script>
 <script>
 var buffer = [];
 var revisionNr = 0;
@@ -62,12 +62,12 @@ function send(op) {
 
 function transform(op) {
 	for (var i = 0; i < buffer.length; i++){
-		var xformed = xforml(op, buffer[i]);
+		var xformed = xformg(op, buffer[i], false);
 		var op = xformed[0];
 		buffer[i] = xformed[1];
 	}
 	if (inFlight) {
-		var xformed = xforml(op,inFlightOp);
+		var xformed = xformg(op,inFlightOp, false);
 		op = xformed[0];
 		inFlightOp = xformed[1];
 	}
@@ -99,7 +99,7 @@ function wait() {
 					inFlight = false;
 				}
 			} else {
-				//recieved = transform(recieved);
+				recieved = transform(recieved);
 				executeOp(recieved);
 			}
 			wait();

@@ -1,0 +1,175 @@
+function xformg(o1, o2, isServer) {
+	console.log("test2");
+	console.log(o1.o);
+	console.log(o2.o);
+	if (o1.o == "i") {
+		console.log("i");
+		if (o2["o"] == "i") {
+			return xformgii(o1,o2,isServer);
+		}
+		if (o2["o"] = "d") {
+			return xformgid(o1,o2);
+		}
+	}
+	if (o1.o == "d") {
+		console.log('d');
+		if (o2["o"] == "i") {
+			return xformgid(o2,o1);
+		}
+		if (o2["o"] = "d") {
+			return xformgdd(o1,o2);
+		}
+	}
+}
+
+function xformgii(op1, op2, isServer) {
+	if (op1.k.length > op2.k.length) {
+		if (isSublistOf(op2.k, op1.k)) {
+			if ( op1.k[op2.k.length] >= op2.i ) {
+				op1.k[op2.k.length]++;
+				return [op1, op2];
+			} else if (op1.k[op2.k.length] < op2.i ) {
+				return [op1, op2];
+			}
+		} else {
+			return [op1, op2];
+		}
+	} else if (op1.k.length < op2.k.length) {
+		if (isSublistOf(op1.k, op2.k)) {
+			if (op2.k[op1.k.length] >= op1.i) {
+				op2.k[op1.length]++;
+				return [op1, op2];
+			} else if (op2.k[op1.k.length]) {
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	} else if (op1.k.length == op2.k.length) {
+		if (isSublistOf(op1.k, op2.k)) {
+			if (op1.i > op2.i) {
+				op1.i++;
+				return [op1,op2];
+			} else if (op1.i < op2.i) {
+				op2.i++;
+				return [op1,op2];
+			} else if (op1.i == op2.i) {
+				if (isServer) {
+					op1.i++;
+					return [op1,op2];
+				} else {
+					op2.i++;
+					return [op1,op2];
+				}
+			} else {
+				return [op1,op2];
+			}
+		}
+	}
+}
+
+function xformgid(op1, op2) {
+	console.log('test1');
+	if (op1.k.length > op2.k.length) {
+		if (isSublistOf(op2.k, op1.k)) {
+			if (op1.k[op2.k.length] > op2.i) {
+				op1.k[op2.k.length]--;
+				return [op1,op2];
+			} else if (op1.k[op2.k.length] == op2.i) {
+				return CONFLICT_HANDLER(op1,op2);
+				console.log(op1);
+				console.log(op2);
+			} else {
+				return [op1,op2];
+			}
+		}
+	} else if (op1.k.length < op2.k.length) {
+		if (isSublistOf(op1.k, op2.k)) {
+			if (op2.k[op1.k.length] >= op1.i) {
+				op2.k[op1.k.length]++;
+				return [op1,op2];
+			} else if (op2.k[op1.k.length] < op1.i) {
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	} else if (op1.k.length == op2.k.length) {
+		if (isSublistOf(op1.k, op2.k)) {
+			if (op1.i < op2.i) {
+				op2.i++;
+				return [op1,op2];
+			}
+			if (op1.i > op2.i) {
+				op1.i--;
+				return [op1,op2];
+			}
+			if (op1.i == op2.i) {
+				op2.i++;
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	}
+}
+
+function xformgdd(op1,op2) {
+	if (op1.k.length > op2.k.length) {
+		if (isSublistOf(op2.k, op1.k)) {
+			if (op1.k.length > op1.i) {
+				op1.k[op2.k.length]--;
+				return [op1,op2];
+			}
+			if (op1.k[op2.k.length] == op2.i) {
+				op1.o = 'n';
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	} else if (op1.k.length < op2.k.length) {
+		if (isSublistOf(op1.k, op2.k)) {
+			if (op2.k[op2.k.length] > op1.i) {
+				op2.k[op1.k.length]--;
+				return [op1,op2];
+			}
+			if (op2.k[op1.k.length] == op1.i) {
+				op2.o = 'n';
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	} else if (op1.k.length == op2.k.length) {
+		if (isSublistOf(op1.k, op2.k)) {
+			if (op1.i < op2.i) {
+				op2.i--;
+				return [op1,op2];
+			}
+			if (op1.i > op2.i) {
+				op1.i--;
+				return [op1,op2];
+			}
+			if (op1.i == op2.i) {
+				op1.o = 'n';
+				op2.o = 'n';
+				return [op1,op2];
+			}
+		} else {
+			return [op1,op2];
+		}
+	}
+}
+
+function CONFLICT_HANDLER(op1,op2) {
+	op1.o = 'n';
+	return [op1,op2];
+}
+
+function isSublistOf(k1,k2) {
+	for (var i = 0; i < k1.length; i++) {
+		if (k1[i] != k2[i]) {return false;}
+	}
+	return true;
+}

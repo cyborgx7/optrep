@@ -4,9 +4,11 @@ eventEmitter = require("events").EventEmitter;
 
 index = fs.readFileSync("graphtest.html");
 filexforml = fs.readFileSync("xforml.js");
+filexformg = fs.readFileSync("xformg.js");
 
 vm = require("vm");
 vm.runInThisContext(filexforml);
+vm.runInThisContext(filexformg);
 
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
@@ -32,7 +34,8 @@ function transform(op) {
 		console.log("cycle");
 		console.log(op)
 		console.log(hist[i]);
-		var xformed = xforml(op, hist[i]);
+		//var xformed = xforml(op, hist[i]);
+		var xformed = xformg(op, hist[i], true);
 		var op = xformed[0];
 		hist[i] = xformed[1];
 	}
@@ -50,11 +53,15 @@ server = http.createServer( function (request, response) {
 			nextUuid++;
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end(index);
-		} if (request.url == "/xforml.js") {
+		} else if (request.url == "/xforml.js") {
 			console.log("xforml");
 			response.writeHead(200, {"Content-Type": "text/JavaScript"});
 			response.end(filexforml);
-		} else { console.log(request.url);};
+		} else if (request.url == "/xformg.js") {
+			console.log("xformg");
+			response.writeHead(200, {"Content-Type": "text/JavaScript"});
+			response.end(filexformg);
+		} else { console.log(request.url);}
 	} else if (request.method == "POST") {
 		console.log("post");
 		if (request.url == "/newOp") { //handle recieving new events
@@ -67,7 +74,7 @@ server = http.createServer( function (request, response) {
 			request.on("end", function () {
 			console.log(body);
 			var op = JSON.parse(body);
-			//op = transform(op);
+			op = transform(op);
 			hist.push(op);
 			//get uid
 			var opUid = parseCookies(request.headers.cookie)["uid"];
