@@ -1,4 +1,4 @@
-function xformg(op1, op2) {
+function xformg(op1, op2, isServer) {
 	console.log(op1.o);
 	console.log(op2.o);
 	if (op1.o == "i") {
@@ -7,7 +7,7 @@ function xformg(op1, op2) {
 			return xformgii(op1,op2);
 		}
 		if (op2["o"] = "d") {
-			return xformgid(op1,op2);
+			return xformgid(op1,op2,isServer);
 		}
 	}
 	if (op1.o == "d") {
@@ -22,7 +22,7 @@ function xformg(op1, op2) {
 	}
 }
 
-function xformgii(op1, op2) {
+function xformgii(op1, op2, isServer) {
 	var tpt = transformationPoint(op1.k,op2.k);
 
 	if (effectIndependent(op1.k,op2.k)) {return [op1,op2];}
@@ -50,6 +50,13 @@ function xformgii(op1, op2) {
 
 		if (op1.k.length == op2.k.length) {
 			//application depndent priorities
+			if(isServer) {
+				op1.k[tpt]++;
+				return [op1,op2];
+			} else {
+				op2.k[tpt]++;
+				return [op1,op2];
+			}
 		}
 	}
 }
