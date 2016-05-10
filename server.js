@@ -16,6 +16,8 @@ var opHandler = new eventEmitter();
 var nextUuid = 0;
 //Initialize operation history
 var hist = [];
+//Initialize broadcast history
+var broad = [];
 
 //cookie parser
 function parseCookies (cookies) {
@@ -64,20 +66,22 @@ server = http.createServer( function (request, response) {
 		} else { console.log(request.url);}
 	} else if (request.method == "POST") {
 		console.log("post");
+		//assemble body
+		var body = "";
+		request.on("data", function (chunk) {
+			body += chunk;
+		});
+		request.on("end", function () {
+		console.log(body);
 		if (request.url == "/newOp") { //handle recieving new events
 			console.log("newop")
-			//assemble body
-			var body = "";
-			request.on("data", function (chunk) {
-				body += chunk;
-			});
-			request.on("end", function () {
-			console.log(body);
 			var op = JSON.parse(body);
 			op = transform(op);
 			hist.push(op);
 			//get uid
 			var opUid = parseCookies(request.headers.cookie)["uid"];
+			op.u = opUid;
+			broad.push(JSON.parse(JSON.stringify(op));
 			opHandler.emit("newOp", JSON.stringify(op), opUid);
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end("success");
@@ -86,15 +90,23 @@ server = http.createServer( function (request, response) {
 			console.log("wait");
 			console.log(request.headers.cookie);
 			console.log(parseCookies(request.headers.cookie));
-			
-			opHandler.once("newOp", function (op, opUid) {
-				response.writeHead(200, {"Content-Type": "text/html"});
-				if (opUid == parseCookies(request.headers.cookie)["uid"]) {
+			if (body < braod.length) {
+				var op = broad[body];
+				if (op.u == parseCookies(request.headers.cookie)["uid"]) {
 					response.end(JSON.stringify({"o":"a"})); //send acknowledge
 				} else {
-					response.end(op); //send operation
+					response.end(JSON.stringify(op));
 				}
-			});
+			} else {
+				opHandler.once("newOp", function (op, opUid) {
+					response.writeHead(200, {"Content-Type": "text/html"});
+					if (opUid == parseCookies(request.headers.cookie)["uid"]) {
+						response.end(JSON.stringify({"o":"a"})); //send acknowledge
+					} else {
+						response.end(op); //send operation
+					}
+				});
+			}
 		}
 	}
 });

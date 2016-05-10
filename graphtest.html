@@ -7,7 +7,7 @@
 	<textarea name="vector" id="vec"></textarea><br>
 </form>
 <button id="send" onclick="newOp();"> Send </button>
-<button id="reach" onclick="reach();"> Reach </button>
+<!-- <button id="reach" onclick="reach();"> Reach </button> -->
 
 <p id="display"></p>
 
@@ -51,10 +51,11 @@ function newOp() {
 }
 
 function send(op) {
-		inFlight = true;
-		inFlightOp = op;
-		op["rn"] = revisionNr;
-		sendOp = JSON.parse(JSON.stringify(op));
+	inFlight = true;
+	inFlightOp = op;
+	op["rn"] = revisionNr;
+	sendOp = JSON.parse(JSON.stringify(op));
+	reach();
 }
 
 function transform(op) {
@@ -107,7 +108,7 @@ function wait() {
 	}
 	xhr.open("POST", "wait", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhr.send("waiting");
+	xhr.send(revisionNr);
 }
 
 function travObj(i, k, node) {
