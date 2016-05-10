@@ -1,12 +1,14 @@
 function xformg(op1, op2, isServer) {
-	console.log(op1.o);
-	console.log(op2.o);
+	console.log(op1);
+	console.log(op2);
 	if (op1.o == "i") {
-		console.log("i");
-		if (op2["o"] == "i") {
+		console.log("1i");
+		if (op2.o == "i") {
+			console.log("2i");
 			return xformgii(op1,op2);
 		}
-		if (op2["o"] = "d") {
+		if (op2.o == "d") {
+			console.log("2d");
 			return xformgid(op1,op2,isServer);
 		}
 	}
@@ -16,10 +18,11 @@ function xformg(op1, op2, isServer) {
 			var xformed = xformgid(op2,op1);
 			return [xformed[1],xformed[0]];
 		}
-		if (op2["o"] = "d") {
+		if (op2["o"] == "d") {
 			return xformgdd(op1,op2);
 		}
 	}
+	return [op1,op2]; //in case of other operation types (no-op)
 }
 
 function xformgii(op1, op2, isServer) {
@@ -83,6 +86,7 @@ function xformgid(op1, op2) {
 		}
 
 		op2.k[tpt]++;
+		return [op1,op2];
 	}
 
 }

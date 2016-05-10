@@ -5,6 +5,7 @@ eventEmitter = require("events").EventEmitter;
 index = fs.readFileSync("graphtest.html");
 filexforml = fs.readFileSync("xforml.js");
 filexformg = fs.readFileSync("xformg.js");
+filegenop = fs.readFileSync("genop.js");
 
 vm = require("vm");
 vm.runInThisContext(filexforml);
@@ -63,6 +64,10 @@ server = http.createServer( function (request, response) {
 			console.log("xformg");
 			response.writeHead(200, {"Content-Type": "text/JavaScript"});
 			response.end(filexformg);
+		} else if (request.url == "/genop.js") {
+			console.log("genop");
+			response.writeHead(200, {"Content-Type": "text/JavaScript"});
+			response.end(filegenop);
 		} else { console.log(request.url);}
 	} else if (request.method == "POST") {
 		console.log("post");
@@ -81,16 +86,16 @@ server = http.createServer( function (request, response) {
 			//get uid
 			var opUid = parseCookies(request.headers.cookie)["uid"];
 			op.u = opUid;
-			broad.push(JSON.parse(JSON.stringify(op));
+			broad.push(JSON.parse(JSON.stringify(op)));
 			opHandler.emit("newOp", JSON.stringify(op), opUid);
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end("success");
-			});
 		} else if (request.url == "/wait") { //handle waiting for events
 			console.log("wait");
 			console.log(request.headers.cookie);
 			console.log(parseCookies(request.headers.cookie));
-			if (body < braod.length) {
+			if (body < broad.length) {
+				response.writeHead(200, {"Content-Type": "text/html"});
 				var op = broad[body];
 				if (op.u == parseCookies(request.headers.cookie)["uid"]) {
 					response.end(JSON.stringify({"o":"a"})); //send acknowledge
@@ -108,6 +113,7 @@ server = http.createServer( function (request, response) {
 				});
 			}
 		}
+		});
 	}
 });
 

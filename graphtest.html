@@ -6,11 +6,12 @@
 	<input type="text" id="cont" name="content"><br>
 	<textarea name="vector" id="vec"></textarea><br>
 </form>
-<button id="send" onclick="newOp();"> Send </button>
+<button id="send" onclick="buildOp();"> Send </button>
 <!-- <button id="reach" onclick="reach();"> Reach </button> -->
 
 <p id="display"></p>
 
+<script src="genop.js"></script>
 <script src="xformg.js"></script>
 <script>
 var buffer = [];
@@ -37,11 +38,10 @@ function buildOp() {
 	};
 	if (opToSend.k[0] == ""){opToSend.k=[];}
 	console.log(opToSend);
-	return opToSend;
+	newOp(opToSend);
 }
 
-function newOp() {
-	var opToSend = buildOp();
+function newOp(opToSend) {
 	if (inFlight) {
 		buffer.push(opToSend);
 	} else { 
@@ -120,8 +120,7 @@ function travObj(i, k, node) {
 }
 
 function travKey(i, k, node) {
-	var val = node[1][0];
-	return travValue(i, k, node, val);
+	return travValue(i, k, node[1]);
 }
 
 function travArray(i, k, node) {
@@ -129,15 +128,14 @@ function travArray(i, k, node) {
 	if (i == k.length-1) {
 		return node;
 	}
-	var val = node[1][k[i]][0];
-	return travValue(i, k, node, val);
+	return travValue(i, k, node[1][k[i]]);
 }
 
-function travValue(i, k, node, val) {
-	if (val == "{}") {
-		return travObj(i, k, node[1]);
-	} else if (val == "[]") {
-		return travArray(i, k, node[1]);
+function travValue(i, k, node) {
+	if (node[0] == "{}") {
+		return travObj(i, k, node);
+	} else if (node[0] == "[]") {
+		return travArray(i, k, node);
 	} else {
 		throw "incorrect path";
 	}
@@ -149,7 +147,9 @@ function insert(c, k) {
 	if (k.length > 1) {
 		node = travKey(0, k, node[1][k[0]]);
 	}
-	node[1].splice(k[k.length-1],0,c);
+	console.log("ins");
+	console.log(node);
+	node[1].splice(k[k.length-1],0,JSON.parse(JSON.stringify(c)));
 	return;
 }
 
@@ -167,6 +167,19 @@ function executeOp(op) {
 	if (op.o == "i") {insert(op.c, op.k);}
 	if (op.o == "d") {remove(op.k);}
 	document.getElementById("display").innerHTML = JSON.stringify(graph);
+}
+
+function generateOps(n) {
+	console.log("test1");
+	for (var i = 0; i < n; i++) {
+		console.log("test2");
+		op = genop(graph);
+		console.log("test3");
+		newOp(op);
+		console.log("test4");
+	}
+	console.log("test5");
+	return "finished";
 }
 
 document.getElementById("display").innerHTML = JSON.stringify(graph);
