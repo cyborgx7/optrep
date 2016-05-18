@@ -2,14 +2,14 @@ http   = require("http");
 fs     = require("fs");
 eventEmitter = require("events").EventEmitter;
 
-index = fs.readFileSync("graphtest.html");
+index = fs.readFileSync("xforml.html");
 filexforml = fs.readFileSync("xforml.js");
 filexformg = fs.readFileSync("xformg.js");
 filegenop = fs.readFileSync("genop.js");
 
 vm = require("vm");
 vm.runInThisContext(filexforml);
-vm.runInThisContext(filexformg);
+//vm.runInThisContext(filexformg);
 
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
@@ -38,11 +38,26 @@ function transform(op) {
 		console.log(op)
 		console.log(hist[i]);
 		//var xformed = xforml(op, hist[i]);
-		var xformed = xformg(op, hist[i], true);
+		var xformed = xforml(op, hist[i], true);
 		var op = xformed[0];
 		hist[i] = xformed[1];
 	}
 	return op
+}
+
+function opWait(uid, rev, response) {
+	console.log(rev);
+	if (rev < broad.length) {
+		response.writeHead(200, {"Content-Type": "text/html"});
+		var op = broad[rev];
+		if (op.u == uid) {
+			response.end(JSON.stringify({"o":"a"})); //send acknowledge
+		} else {
+			response.end(JSON.stringify(op));
+		}
+	} else {
+		opHandler.once("newOp", function () {opWait(uid,rev,response)});
+	}
 }
 
 //request handler
@@ -87,31 +102,14 @@ server = http.createServer( function (request, response) {
 			var opUid = parseCookies(request.headers.cookie)["uid"];
 			op.u = opUid;
 			broad.push(JSON.parse(JSON.stringify(op)));
-			opHandler.emit("newOp", JSON.stringify(op), opUid);
+			opHandler.emit("newOp");
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end("success");
 		} else if (request.url == "/wait") { //handle waiting for events
 			console.log("wait");
 			console.log(request.headers.cookie);
 			console.log(parseCookies(request.headers.cookie));
-			if (body < broad.length) {
-				response.writeHead(200, {"Content-Type": "text/html"});
-				var op = broad[body];
-				if (op.u == parseCookies(request.headers.cookie)["uid"]) {
-					response.end(JSON.stringify({"o":"a"})); //send acknowledge
-				} else {
-					response.end(JSON.stringify(op));
-				}
-			} else {
-				opHandler.once("newOp", function (op, opUid) {
-					response.writeHead(200, {"Content-Type": "text/html"});
-					if (opUid == parseCookies(request.headers.cookie)["uid"]) {
-						response.end(JSON.stringify({"o":"a"})); //send acknowledge
-					} else {
-						response.end(op); //send operation
-					}
-				});
-			}
+			opWait(parseCookies(request.headers.cookie)["uid"], body, response);
 		}
 		});
 	}

@@ -3,16 +3,16 @@
 <form>
 	<input type="radio" name="op" value="d">Delete<br>
 	<input type="radio" name="op" value="i">Insert<br>
-	<input type="text" id="cont" name="content"><br>
-	<textarea name="vector" id="vec"></textarea><br>
+	<input type="text" id="cont" name="content">
+	<input type="number" name="position" id="pos" min="0" max="100">
 </form>
-<button id="send" onclick="buildOp();"> Send </button>
-<!-- <button id="reach" onclick="reach();"> Reach </button> -->
+<button id="send" onclick="newOp();"> Send </button>
+<button id="reach" onclick="reach();"> Reach </button>
 
 <p id="display"></p>
 
-<script src="genop.js"></script>
-<script src="xformg.js"></script>
+<script src="xforml.js"></script>
+
 <script>
 var buffer = [];
 var revisionNr = 0;
@@ -20,7 +20,7 @@ var inFlight = false;
 var inFlightOp;
 var sendOp;
 
-var graph = ["{}",[]];
+var graph = [];
 
 function buildOp() {
 	var radios = document.getElementsByName("op");
@@ -31,14 +31,14 @@ function buildOp() {
 			break;
 		}
 	}
+	
 	var opToSend = {
 		o:operation,
-		k:document.getElementById("vec").value.split("\n"),
-		c:JSON.parse(document.getElementById("cont").value),
+		k:document.getElementById("pos").value,
+		c:document.getElementById("cont").value
 	};
-	if (opToSend.k[0] == ""){opToSend.k=[];}
 	console.log(opToSend);
-	newOp(opToSend);
+	return opToSend;
 }
 
 function newOp(opToSend) {
@@ -60,12 +60,12 @@ function send(op) {
 
 function transform(op) {
 	for (var i = 0; i < buffer.length; i++){
-		var xformed = xformg(op, buffer[i], false);
+		var xformed = xforml(op, buffer[i], false);
 		var op = xformed[0];
 		buffer[i] = xformed[1];
 	}
 	if (inFlight) {
-		var xformed = xformg(op, inFlightOp, false);
+		var xformed = xforml(op, inFlightOp, false);
 		op = xformed[0];
 		inFlightOp = xformed[1];
 	}
@@ -112,72 +112,23 @@ function wait() {
 	xhr.send(revisionNr);
 }
 
-function travObj(i, k, node) {
-	i++;
-	if (i == k.length-1) {
-		return node;
-	}
-	return travKey(i, k, node[1][k[i]]);
-}
-
-function travKey(i, k, node) {
-	return travValue(i, k, node[1]);
-}
-
-function travArray(i, k, node) {
-	i++;
-	if (i == k.length-1) {
-		return node;
-	}
-	return travValue(i, k, node[1][k[i]]);
-}
-
-function travValue(i, k, node) {
-	if (node[0] == "{}") {
-		return travObj(i, k, node);
-	} else if (node[0] == "[]") {
-		return travArray(i, k, node);
-	} else {
-		throw "incorrect path";
-	}
-
-}
-
-function insert(c, k) {
-	var node = graph;
-	if (k.length > 1) {
-		node = travKey(0, k, node[1][k[0]]);
-	}
-	console.log("ins");
-	console.log(node);
-	node[1].splice(k[k.length-1],0,JSON.parse(JSON.stringify(c)));
-	return;
-}
-
-function remove(k) {
-	var node = graph;
-	if (k.length > 1) {
-		node = travKey(0, k, node[1][k[0]]);
-	}
-	node[1].splice(k[k.length-1],1);
-	return;
-}
-
 function executeOp(op) {
 	console.log(op)
-	if (op.o == "i") {insert(op.c, op.k);}
-	if (op.o == "d") {remove(op.k);}
-	document.getElementById("display").innerHTML = JSON.stringify(graph);
+	if (op.o == "i") {graph.splice(op["k"], 0, op["c"]);}
+	if (op.o == "d") {graph.splice(op["k"], 1);}
+	document.getElementById("display").innerHTML = graph.toString();
 }
 
 function generateOps(n) {
 	console.log("test1");
 	for (var i = 0; i < n; i++) {
-		console.log("test2");
-		op = genop(graph);
-		console.log("test3");
-		newOp(op);
-		console.log("test4");
+		//sleepFor(1000);
+		console.log(graph.length);
+		if (Math.random() < 0.5 || graph.length == 0) {
+			newOp({o:"i", k:Math.floor(Math.random()*graph.length), c:i});
+		} else { 
+			newOp({o:"d", k:Math.floor(Math.random()*graph.length)});
+		}
 	}
 	console.log("test5");
 	return "finished";
@@ -189,7 +140,7 @@ function sleepFor( sleepDuration ){
 }
 
 document.getElementById("display").innerHTML = JSON.stringify(graph);
-wait();
+//wait();
 </script>
 </body>
 </html>
