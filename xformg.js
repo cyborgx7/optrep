@@ -19,7 +19,7 @@ function xformg(op1, op2, isServer) {
 			return [xformed[1],xformed[0]];
 		}
 		if (op2["o"] == "d") {
-			return xformgdd(op1,op2,isServer);
+			return xformgdd(op1,op2);
 		}
 	}
 	return [op1,op2]; //in case of other operation types (no-op)
@@ -127,12 +127,8 @@ function xformgdd(op1,op2,isServer) {
 		}
 
 		if (op1.k.length == op2.k.length) {
-			console.log("hap");
 			op1.o = "n";
-			if (!isServer) {
-				console.log("penning");
-				op2.o = "n";
-			}
+			op2.o = "n";
 			return [op1,op2];
 		}
 	}

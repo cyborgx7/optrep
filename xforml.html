@@ -38,7 +38,7 @@ function buildOp() {
 		c:document.getElementById("cont").value
 	};
 	console.log(opToSend);
-	return opToSend;
+	newOp(opToSend);
 }
 
 function newOp(opToSend) {
@@ -59,15 +59,15 @@ function send(op) {
 }
 
 function transform(op) {
-	for (var i = 0; i < buffer.length; i++){
-		var xformed = xforml(op, buffer[i], false);
-		var op = xformed[0];
-		buffer[i] = xformed[1];
-	}
 	if (inFlight) {
 		var xformed = xforml(op, inFlightOp, false);
 		op = xformed[0];
 		inFlightOp = xformed[1];
+	}
+	for (var i = 0; i < buffer.length; i++) {
+		var xformed = xforml(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(buffer[i])), false);
+		var op = xformed[0];
+		buffer[i] = xformed[1];
 	}
 	return op
 }
@@ -119,13 +119,13 @@ function executeOp(op) {
 	document.getElementById("display").innerHTML = graph.toString();
 }
 
-function generateOps(n) {
+function generateOps(n, t) {
 	console.log("test1");
 	for (var i = 0; i < n; i++) {
 		//sleepFor(1000);
 		console.log(graph.length);
 		if (Math.random() < 0.5 || graph.length == 0) {
-			newOp({o:"i", k:Math.floor(Math.random()*graph.length), c:i});
+			newOp({o:"i", k:Math.floor(Math.random()*(graph.length+1)), c:t+i});
 		} else { 
 			newOp({o:"d", k:Math.floor(Math.random()*graph.length)});
 		}

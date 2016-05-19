@@ -59,15 +59,15 @@ function send(op) {
 }
 
 function transform(op) {
-	for (var i = 0; i < buffer.length; i++){
-		var xformed = xformg(op, buffer[i], false);
-		var op = xformed[0];
-		buffer[i] = xformed[1];
-	}
 	if (inFlight) {
 		var xformed = xformg(op, inFlightOp, false);
 		op = xformed[0];
 		inFlightOp = xformed[1];
+	}
+	for (var i = 0; i < buffer.length; i++){
+		var xformed = xformg(op, buffer[i], false);
+		var op = xformed[0];
+		buffer[i] = xformed[1];
 	}
 	return op
 }
@@ -189,7 +189,7 @@ function sleepFor( sleepDuration ){
 }
 
 document.getElementById("display").innerHTML = JSON.stringify(graph);
-wait();
+//wait();
 </script>
 </body>
 </html>
