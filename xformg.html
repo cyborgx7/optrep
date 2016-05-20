@@ -171,6 +171,7 @@ function executeOp(op) {
 }
 
 function generateOps(n) {
+	var now = new Date().getTime();
 	console.log("test1");
 	for (var i = 0; i < n; i++) {
 		console.log("test2");
@@ -180,6 +181,7 @@ function generateOps(n) {
 		console.log("test4");
 	}
 	console.log("test5");
+	console.log(new Date().getTime() - now);
 	return "finished";
 }
 
@@ -189,7 +191,7 @@ function sleepFor( sleepDuration ){
 }
 
 document.getElementById("display").innerHTML = JSON.stringify(graph);
-//wait();
+wait();
 </script>
 </body>
 </html>

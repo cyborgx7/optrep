@@ -2,14 +2,14 @@ http   = require("http");
 fs     = require("fs");
 eventEmitter = require("events").EventEmitter;
 
-index = fs.readFileSync("xformg.html");
+index = fs.readFileSync("xforml.html");
 filexforml = fs.readFileSync("xforml.js");
 filexformg = fs.readFileSync("xformg.js");
 filegenop = fs.readFileSync("genop.js");
 
 vm = require("vm");
-//vm.runInThisContext(filexforml);
-vm.runInThisContext(filexformg);
+vm.runInThisContext(filexforml);
+//vm.runInThisContext(filexformg);
 
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
@@ -38,7 +38,7 @@ function transform(op) {
 		console.log(op)
 		console.log(hist[i]);
 		//var xformed = xforml(op, hist[i]);
-		var xformed = xformg(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(hist[i])), true);
+		var xformed = xforml(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(hist[i])), true);
 		var op = xformed[0];
 		//hist[i] = xformed[1];
 	}

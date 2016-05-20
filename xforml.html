@@ -64,13 +64,14 @@ function transform(op) {
 		op = xformed[0];
 		inFlightOp = xformed[1];
 	}
-	for (var i = 0; i < buffer.length; i++) {
-		var xformed = xforml(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(buffer[i])), false);
+	for (var i = 0; i < buffer.length; i++){
+		var xformed = xforml(op, buffer[i], false);
 		var op = xformed[0];
 		buffer[i] = xformed[1];
 	}
 	return op
 }
+
 
 function reach() {
 	var xhr = new XMLHttpRequest();
@@ -140,7 +141,7 @@ function sleepFor( sleepDuration ){
 }
 
 document.getElementById("display").innerHTML = JSON.stringify(graph);
-//wait();
+wait();
 </script>
 </body>
 </html>
