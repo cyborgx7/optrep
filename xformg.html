@@ -93,53 +93,32 @@ function wait() {
 	xhr.send(revisionNr);
 }
 
-function travObj(i, k, node) {
-	i++;
-	if (i == k.length-1) {
-		return node;
-	}
-	return travKey(i, k, node[1][k[i]]);
-}
-
-function travKey(i, k, node) {
-	return travValue(i, k, node[1]);
-}
-
-function travArray(i, k, node) {
-	i++;
-	if (i == k.length-1) {
-		return node;
-	}
-	return travValue(i, k, node[1][k[i]]);
-}
-
-function travValue(i, k, node) {
-	if (node[0] == "{}") {
-		return travObj(i, k, node);
-	} else if (node[0] == "[]") {
-		return travArray(i, k, node);
-	} else {
-		throw "incorrect path";
-	}
-
-}
-
 function insert(c, k) {
 	var node = graph;
 	if (k.length > 1) {
-		node = travKey(0, k, node[1][k[0]]);
+		node = getNode(0, k, node);
 	}
-	node[1].splice(k[k.length-1],0,JSON.parse(JSON.stringify(c)));
+	node.splice(k[k.length-1],0,JSON.parse(JSON.stringify(c)));
 	return;
 }
 
 function remove(k) {
 	var node = graph;
 	if (k.length > 1) {
-		node = travKey(0, k, node[1][k[0]]);
+		node = getNode(0, k, node);
 	}
-	node[1].splice(k[k.length-1],1);
+	node.splice(k[k.length-1],1);
 	return;
+}
+
+function getNode(i,k,node) {
+	if (i < k.length-1) {
+		node = node[k[i]];
+		i++;
+		return getNode(i,k,node);
+	} else {
+		return node;
+	}
 }
 
 function executeOp(op) {

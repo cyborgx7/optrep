@@ -9,6 +9,7 @@ function genop(graph) {
 function genObj(node, path) {
 	console.log("obj");
 	console.log(node);
+	path.push(1);
 	if (node[1].length == 0) {
 		//empty object, insert key node
 		path.push(0);
@@ -34,6 +35,7 @@ function genObj(node, path) {
 function genKey(node, path) {
 	console.log("key");
 	console.log(node);
+	path.push(1);
 	return genValue(node[1], path);
 }
 
@@ -53,6 +55,7 @@ function genValue(node, path) {
 function genArray(node, path) {
 	console.log("arr");
 	console.log(node);
+	path.push(1);
 	if (node[1].length == 0) {
 		path.push(0);
 		var valueNode = newValue();
