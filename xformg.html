@@ -22,25 +22,6 @@ var sendOp;
 
 var graph = ["{}",[]];
 
-function buildOp() {
-	var radios = document.getElementsByName("op");
-	var operation;
-	for (var i = 0; i < radios.length; i++) {       
-		if (radios[i].checked) {
-			operation = radios[i].value;
-			break;
-		}
-	}
-	var opToSend = {
-		o:operation,
-		k:document.getElementById("vec").value.split("\n"),
-		c:JSON.parse(document.getElementById("cont").value),
-	};
-	if (opToSend.k[0] == ""){opToSend.k=[];}
-	console.log(opToSend);
-	newOp(opToSend);
-}
-
 function newOp(opToSend) {
 	if (inFlight) {
 		buffer.push(opToSend);
@@ -148,8 +129,6 @@ function insert(c, k) {
 	if (k.length > 1) {
 		node = travKey(0, k, node[1][k[0]]);
 	}
-	console.log("ins");
-	console.log(node);
 	node[1].splice(k[k.length-1],0,JSON.parse(JSON.stringify(c)));
 	return;
 }
@@ -171,18 +150,32 @@ function executeOp(op) {
 }
 
 function generateOps(n) {
-	var now = new Date().getTime();
-	console.log("test1");
+	//var now = new Date().getTime();
 	for (var i = 0; i < n; i++) {
-		console.log("test2");
 		op = genop(graph);
-		console.log("test3");
 		newOp(op);
-		console.log("test4");
 	}
-	console.log("test5");
-	console.log(new Date().getTime() - now);
+	//console.log(new Date().getTime() - now);
 	return "finished";
+}
+
+function buildOp() {
+	var radios = document.getElementsByName("op");
+	var operation;
+	for (var i = 0; i < radios.length; i++) {       
+		if (radios[i].checked) {
+			operation = radios[i].value;
+			break;
+		}
+	}
+	var opToSend = {
+		o:operation,
+		k:document.getElementById("vec").value.split("\n"),
+		c:JSON.parse(document.getElementById("cont").value),
+	};
+	if (opToSend.k[0] == ""){opToSend.k=[];}
+	console.log(opToSend);
+	newOp(opToSend);
 }
 
 function sleepFor( sleepDuration ){

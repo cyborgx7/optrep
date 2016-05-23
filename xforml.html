@@ -6,8 +6,8 @@
 	<input type="text" id="cont" name="content">
 	<input type="number" name="position" id="pos" min="0" max="100">
 </form>
-<button id="send" onclick="newOp();"> Send </button>
-<button id="reach" onclick="reach();"> Reach </button>
+<button id="send" onclick="buildOp();"> Send </button>
+<!-- <button id="reach" onclick="reach();"> Reach </button> -->
 
 <p id="display"></p>
 
@@ -21,25 +21,6 @@ var inFlightOp;
 var sendOp;
 
 var graph = [];
-
-function buildOp() {
-	var radios = document.getElementsByName("op");
-	var operation;
-	for (var i = 0; i < radios.length; i++) {       
-		if (radios[i].checked) {
-			operation = radios[i].value;
-			break;
-		}
-	}
-	
-	var opToSend = {
-		o:operation,
-		k:document.getElementById("pos").value,
-		c:document.getElementById("cont").value
-	};
-	console.log(opToSend);
-	newOp(opToSend);
-}
 
 function newOp(opToSend) {
 	if (inFlight) {
@@ -121,18 +102,34 @@ function executeOp(op) {
 }
 
 function generateOps(n, t) {
-	console.log("test1");
 	for (var i = 0; i < n; i++) {
 		//sleepFor(1000);
-		console.log(graph.length);
 		if (Math.random() < 0.5 || graph.length == 0) {
 			newOp({o:"i", k:Math.floor(Math.random()*(graph.length+1)), c:t+i});
 		} else { 
 			newOp({o:"d", k:Math.floor(Math.random()*graph.length)});
 		}
 	}
-	console.log("test5");
 	return "finished";
+}
+
+function buildOp() {
+	var radios = document.getElementsByName("op");
+	var operation;
+	for (var i = 0; i < radios.length; i++) {       
+		if (radios[i].checked) {
+			operation = radios[i].value;
+			break;
+		}
+	}
+	
+	var opToSend = {
+		o:operation,
+		k:document.getElementById("pos").value,
+		c:document.getElementById("cont").value
+	};
+	console.log(opToSend);
+	newOp(opToSend);
 }
 
 function sleepFor( sleepDuration ){

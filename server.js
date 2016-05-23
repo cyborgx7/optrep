@@ -2,14 +2,27 @@ http   = require("http");
 fs     = require("fs");
 eventEmitter = require("events").EventEmitter;
 
-index = fs.readFileSync("xforml.html");
+listfile = fs.readFileSync("xforml.html");
+treefile = fs.readFileSync("xformg.html");
 filexforml = fs.readFileSync("xforml.js");
 filexformg = fs.readFileSync("xformg.js");
 filegenop = fs.readFileSync("genop.js");
 
 vm = require("vm");
-vm.runInThisContext(filexforml);
-//vm.runInThisContext(filexformg);
+
+var datatype = "tree";
+
+if (datatype === "list") {
+	vm.runInThisContext(filexforml);
+	xform = xforml;
+	index = listfile;
+}
+
+if (datatype == "tree") {
+	vm.runInThisContext(filexformg);
+	xform = xformg;
+	index = treefile;
+}
 
 //Create event for recieving an operation
 var opHandler = new eventEmitter();
@@ -17,8 +30,6 @@ var opHandler = new eventEmitter();
 var nextUuid = 0;
 //Initialize operation history
 var hist = [];
-//Initialize broadcast history
-var broad = [];
 
 //cookie parser
 function parseCookies (cookies) {
@@ -38,7 +49,7 @@ function transform(op) {
 		console.log(op)
 		console.log(hist[i]);
 		//var xformed = xforml(op, hist[i]);
-		var xformed = xforml(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(hist[i])), true);
+		var xformed = xform(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(hist[i])), true);
 		var op = xformed[0];
 		//hist[i] = xformed[1];
 	}
@@ -47,9 +58,9 @@ function transform(op) {
 
 function opWait(uid, rev, response) {
 	console.log(rev);
-	if (rev < broad.length) {
+	if (rev < hist.length) {
 		response.writeHead(200, {"Content-Type": "text/html"});
-		var op = broad[rev];
+		var op = hist[rev];
 		if (op.u == uid) {
 			response.end(JSON.stringify({"o":"a"})); //send acknowledge
 		} else {
@@ -101,7 +112,6 @@ server = http.createServer( function (request, response) {
 			//get uid
 			var opUid = parseCookies(request.headers.cookie)["uid"];
 			op.u = opUid;
-			broad.push(JSON.parse(JSON.stringify(op)));
 			opHandler.emit("newOp");
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end("success");
