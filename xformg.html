@@ -20,6 +20,9 @@ var inFlight = false;
 var inFlightOp;
 var sendOp;
 
+//transformation counter
+//var transCount = 0;
+
 var graph = ["{}",[]];
 
 function newOp(opToSend) {
@@ -42,11 +45,13 @@ function send(op) {
 function transform(op) {
 	if (inFlight) {
 		var xformed = xformg(op, inFlightOp, false);
+		//transCount++;
 		op = xformed[0];
 		inFlightOp = xformed[1];
 	}
 	for (var i = 0; i < buffer.length; i++){
 		var xformed = xformg(op, buffer[i], false);
+		//transCount++;
 		var op = xformed[0];
 		buffer[i] = xformed[1];
 	}
@@ -57,7 +62,7 @@ function reach() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			console.log(xhr.response);
+			//console.log(xhr.response);
 		}
 	};
 	xhr.open("POST", "newOp", true);
@@ -122,7 +127,7 @@ function getNode(i,k,node) {
 }
 
 function executeOp(op) {
-	console.log(op)
+	//console.log(op)
 	if (op.o == "i") {insert(op.c, op.k);}
 	if (op.o == "d") {remove(op.k);}
 	document.getElementById("display").innerHTML = JSON.stringify(graph);
@@ -153,7 +158,7 @@ function buildOp() {
 		c:JSON.parse(document.getElementById("cont").value),
 	};
 	if (opToSend.k[0] == ""){opToSend.k=[];}
-	console.log(opToSend);
+	//console.log(opToSend);
 	newOp(opToSend);
 }
 

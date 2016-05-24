@@ -31,6 +31,8 @@ var nextUuid = 0;
 //Initialize operation history
 var hist = [];
 
+//transformation counter
+//var transCount = 0;
 //cookie parser
 function parseCookies (cookies) {
 	if (!cookies) { return {} }
@@ -43,13 +45,15 @@ function parseCookies (cookies) {
 }
 
 function transform(op) {
-	console.log("transform");
+	//console.log("transform");
 	for (var i = op["rn"]; i < hist.length; i++){
-		console.log("cycle");
-		console.log(op)
-		console.log(hist[i]);
+		//console.log("cycle");
+		//console.log(op)
+		//console.log(hist[i]);
 		//var xformed = xforml(op, hist[i]);
 		var xformed = xform(JSON.parse(JSON.stringify(op)), JSON.parse(JSON.stringify(hist[i])), true);
+		//transCount++;
+		//console.log("t"+transCount);
 		var op = xformed[0];
 		//hist[i] = xformed[1];
 	}
@@ -73,39 +77,39 @@ function opWait(uid, rev, response) {
 
 //request handler
 server = http.createServer( function (request, response) {
-	console.log("recieve");
+	//console.log("recieve");
 	if (request.method == "GET") {
-		console.log("get");
+		//console.log("get");
 		if (request.url == "/optrep") {
-			console.log("optrep");
+			//console.log("optrep");
 			response.setHeader("Set-Cookie", ["uid="+nextUuid]);
 			nextUuid++;
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end(index);
 		} else if (request.url == "/xforml.js") {
-			console.log("xforml");
+			//console.log("xforml");
 			response.writeHead(200, {"Content-Type": "text/JavaScript"});
 			response.end(filexforml);
 		} else if (request.url == "/xformg.js") {
-			console.log("xformg");
+			//console.log("xformg");
 			response.writeHead(200, {"Content-Type": "text/JavaScript"});
 			response.end(filexformg);
 		} else if (request.url == "/genop.js") {
-			console.log("genop");
+			//console.log("genop");
 			response.writeHead(200, {"Content-Type": "text/JavaScript"});
 			response.end(filegenop);
 		} else { console.log(request.url);}
 	} else if (request.method == "POST") {
-		console.log("post");
+		//console.log("post");
 		//assemble body
 		var body = "";
 		request.on("data", function (chunk) {
 			body += chunk;
 		});
 		request.on("end", function () {
-		console.log(body);
+		//console.log(body);
 		if (request.url == "/newOp") { //handle recieving new events
-			console.log("newop")
+			//console.log("newop")
 			var op = JSON.parse(body);
 			op = transform(op);
 			hist.push(op);
@@ -116,9 +120,9 @@ server = http.createServer( function (request, response) {
 			response.writeHead(200, {"Content-Type": "text/html"});
 			response.end("success");
 		} else if (request.url == "/wait") { //handle waiting for events
-			console.log("wait");
-			console.log(request.headers.cookie);
-			console.log(parseCookies(request.headers.cookie));
+			//console.log("wait");
+			//console.log(request.headers.cookie);
+			//console.log(parseCookies(request.headers.cookie));
 			opWait(parseCookies(request.headers.cookie)["uid"], body, response);
 		}
 		});

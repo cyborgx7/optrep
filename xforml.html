@@ -58,7 +58,7 @@ function reach() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			console.log(xhr.response);
+			//console.log(xhr.response);
 		}
 	};
 	xhr.open("POST", "newOp", true);
@@ -95,7 +95,7 @@ function wait() {
 }
 
 function executeOp(op) {
-	console.log(op)
+	//console.log(op)
 	if (op.o == "i") {graph.splice(op["k"], 0, op["c"]);}
 	if (op.o == "d") {graph.splice(op["k"], 1);}
 	document.getElementById("display").innerHTML = graph.toString();
@@ -128,7 +128,7 @@ function buildOp() {
 		k:document.getElementById("pos").value,
 		c:document.getElementById("cont").value
 	};
-	console.log(opToSend);
+	//console.log(opToSend);
 	newOp(opToSend);
 }
 
