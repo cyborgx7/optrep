@@ -1,0 +1,26 @@
+Server starten:
+node server.js
+
+Mit server verbinden:
+http://localhost:9236/optrep
+
+Die Anwendung nutzt cookies. Clients müssen deshalb in getrennten sessions gestartet werden. Empfohlen ist Multifox add-on für Firefox.
+
+
+Wechseln zwischen tree und list durch setzen der variable datatype in server.js.
+
+Bedienen der Beispielanwendungen:
+List:
+Operationstyp wählen, index setzen, gegebenenfalls Inhalt hinzufügen, senden Drücken.
+
+Tree:
+Operationstyp wählen, Positionsvektor durch newline-getrennte indexe eingeben, gegebenfalls Inhalt (muss valides JSON sein) eingeben.
+
+Operationen generieren:
+List:
+generateOps(Anzahl, string)
+Der String wird vor jedes eingefügte Element gesetzt um erkennen zu können welches Element von welchem Client kommt.
+
+Tree:
+generateOps(Anzahl)
+Generiert JSON-Abbildung-konsistente Operationen.
